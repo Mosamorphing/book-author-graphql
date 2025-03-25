@@ -1,16 +1,18 @@
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
-import schema  from './schema/schema.js';
+import schema from './schema/schema.js';
 import mongoose from 'mongoose';
 import cors from 'cors';
-// import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 
-// dotenv.config();
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
 app.use(cors());
 
-mongoose.connect('mongodb+srv://mosadoluwamorphing:P2jEObYfBVfCJaab@cluster0.1030r.mongodb.net/');
+// Use environment variable for MongoDB connection
+mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.once('open', () => {
     console.log('Connected to database');
 });
@@ -18,9 +20,9 @@ mongoose.connection.once('open', () => {
 app.use('/graphql', graphqlHTTP({
     schema,
     graphiql: true
-
 }));
 
-app.listen(4000, () => {
-    console.log('Server is listening on port 4000');
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
 });
